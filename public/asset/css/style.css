@@ -1,0 +1,387 @@
+
+
+/* login page */
+
+.login-page {
+    /* background-color: #393e42; */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    min-height: 100vh;
+}
+.login-container {
+    width: 100%;
+    max-width: 400px;
+    padding: 20px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.486);
+}
+.text-login{
+    margin-bottom: 20px;
+    text-align: center;
+    border-bottom: 2px solid #00000050;
+    /* padding: 5px; */
+}
+.login-container .form-control {
+    height: 45px;
+    border: none;
+    border-bottom: 2px solid #00000050;
+    
+    box-shadow: none;
+    outline: none;
+    padding: 10px;
+    font-size: 16px;
+}
+.login-container .btn {
+    padding: 10px;
+    font-size: 18px;
+    border-radius: 50px;
+}
+@media (max-width: 576px) {
+    .login-container {
+        padding: 15px;
+    }
+}
+
+
+/* Gaya tombol secara umum */
+
+.section {
+    margin-top: 10px;
+    margin-bottom: 20px;
+}
+
+.card {
+    color: #000000;
+    border-radius: 50px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 10px;
+    
+    text-align: center;
+    
+}
+button.card-absensi  {
+    border: none;
+    padding: 20px !important;
+    align-items: center;
+    border-radius: 30px;
+    width: 100%;
+    
+    box-shadow: 0 0 9px 2px #0000002c;
+
+}
+
+
+/* Gaya khusus untuk gambar avatar */
+.avatar img {
+    width: 60px;
+    height: 60px;
+    border-radius: 50% !important;
+    border: 2px solid #000000;
+}
+
+/* Gaya ikon dalam tombol menu */
+.menu-icon a {
+    font-size: 40px;
+
+}
+
+/* Gaya ikon dalam presensi */
+.iconpresence ion-icon {
+    font-size: 30px;
+    filter: drop-shadow (0px 0px 40px 8px rgba(0, 0, 0, 0.432));
+}
+
+
+/* Gradien untuk tombol "Masuk" */
+.gradasigreen {
+    background: linear-gradient(45deg, #32CD32, #00FF7F);
+}
+
+/* Gradien untuk tombol "Pulang" */
+.gradasired {
+    background: linear-gradient(45deg, #FF4500, #FF6347);
+    border-radius: 50px;
+    align-items: center;
+}
+
+button.card-absensi:hover {
+    transform: translateY(-5px); 
+    cursor: pointer;
+    filter: brightness(0.9); /* Memberikan sedikit efek saat hover */
+}
+
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    border-radius: 50px;
+    background-color: #007bff;
+    color: white;
+    box-shadow: 0 0px 9px rgb(0, 123, 255) ;
+}
+.header h1 {
+    margin: 0;
+    font-size: 20px;
+}
+.header .back-button {
+    background-color: white;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    border-radius: 50%;
+    color: #007bff;
+    font-size: 20px;
+    cursor: pointer;
+
+}
+
+.search {
+  --background: #ffffff;
+  --text-color: #414856;
+  --primary-color: #007bff;
+  --border-radius: 10px;
+  --width: 190px;    
+  --height: 55px;      
+  background: var(--background);
+  width: auto;
+  height: var(--height);
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--border-radius);
+  box-shadow: 0 10px 30px rgba(#414856, .05);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  input[type="text"] {
+    position: relative;
+    width: var(--height);
+    height: var(--height);
+    font: 400 16px 'Varela Round', sans-serif;
+    color: var(--text-color);
+    border: 0;
+    box-sizing: border-box;
+    outline: none;
+    padding: 0 0 0 40px;
+    transition: width .6s ease;
+    z-index: 10;
+    opacity: 0;
+    cursor: pointer;
+    &:focus {
+      z-index: 0;
+      opacity: 1;
+      width: var(--width);
+      ~ .symbol {
+        &::before {
+          width: 0%;
+        }
+        &:after {
+          clip-path: inset(0% 0% 0% 100%);
+          transition: clip-path .04s linear .105s;
+        }
+        .cloud {
+          top: -30px;
+          left: -30px;
+          transform: translate(0, 0);
+          transition: all .6s ease;
+        }
+        .lens {
+          top: 20px;
+          left: 15px;
+          transform: translate(0, 0);
+          fill: var(--primary-color);
+          transition: top .5s ease .1s, left .5s ease .1s, fill .3s ease;
+        }
+      }
+    }
+  }
+  .symbol {
+    height: 100%;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    &:before {
+      content:"";
+      position: absolute;
+      right: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--primary-color);
+      z-index: -1;
+      transition: width .6s ease;
+    }
+    &:after {
+      content:"";
+      position: absolute;
+      top: 21px;
+      left: 21px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: var(--primary-color);
+      z-index: 1;
+      clip-path: inset(0% 0% 0% 0%);
+      transition: clip-path .04s linear .225s;
+    }
+    .cloud,
+    .lens {
+      position: absolute;
+      fill: #fff;
+      stroke: none;
+      top: 50%;
+      left: 50%;
+    }
+    .cloud {
+      width: 35px;
+      height: 32px;
+      transform: translate(-50%, -60%);
+      transition: all .6s ease;
+    }
+    .lens {
+      fill: #fff;
+      width: 16px;
+      height: 16px;
+      z-index: 2;
+      top: 24px;
+      left: 24px;
+      transition: top .3s ease, left .3s ease, fill .2s ease .2s;
+    }
+  }
+}
+
+.profile-container {
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    margin: 20px;
+    padding: 20px;
+    text-align: center;
+    position: relative;
+}
+.avatar-profile img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.avatar-profile {
+width: 120px;
+height: 120px;
+border-radius: 50%;
+margin: 0 auto;
+position: relative; /* Ensures that the edit button can be positioned absolutely */
+overflow: hidden; /* Ensures that the content stays within the rounded shape */
+}
+
+.edit-avatar {
+position: absolute;
+bottom: 10px; /* Adjust the position if necessary */
+right: 10px; /* Adjust the position if necessary */
+background-color: #007bff;
+color: white;
+border-radius: 50%;
+width: 30px;
+height: 30px;
+display: flex;
+align-items: center;
+justify-content: center;
+cursor: pointer;
+border: 2px solid white;
+box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+z-index: 10; /* Ensure the button appears above the image */
+}
+.data-profile {
+    text-align: left;
+    margin-top: 20px;
+}
+.profile-name, .profile-position, .profile-email, .profile-password {
+    font-size: 16px;
+    color: #666;
+    margin: 10px 0;
+    display: flex;
+    align-items: center;
+}
+.profile-name {
+    font-size: 24px;
+    font-weight: bold;
+}
+.underline {
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 5px;
+    flex: 1;
+}
+.edit-icon {
+    cursor: pointer;
+    color: #007bff;
+    margin-left: 10px;
+}
+.edit-icon ion-icon {
+    font-size: 20px;
+}
+.icon {
+    font-size: 20px;
+    color: #007bff;
+    margin-right: 10px;
+}
+
+.modal-dialog {
+    position: absolute;
+    bottom: 20px;
+    width: 100%;
+    margin: 0;
+}
+
+.button-logout {
+    border: none;
+    background-color: crimson;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 50px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 20px;
+    justify-content: flex-end !important;
+    box-shadow: 0 0px 9px rgb(255, 0, 0) ;
+
+}
+
+.button-logout:hover {
+    background-color: whitesmoke;
+    color: crimson;
+    transition:  1s;
+
+}
+
+
+.status-hadir {
+    color: white;
+    background-color: rgb(14, 238, 14);
+    border-radius: 50px;
+    padding: 3px 5px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center  !important;
+    display: inline-block;
+    min-width: 80px;
+}
+
+.in-Progress{
+    color: white;
+    background-color: rgb(252, 195, 9);
+    border-radius: 30px;
+    padding: 3px 9px !important;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: center  !important;
+    display: inline-block;
+    min-width: 20px;
+}
