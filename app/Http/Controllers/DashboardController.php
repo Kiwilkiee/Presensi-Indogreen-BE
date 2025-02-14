@@ -5,43 +5,32 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Absensi;
+use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 
 
 class DashboardController extends Controller
 {
-
-    public function showDashboardPage() {
-        
-        return view('dashboard.dashboard');
-    }
     public function index()
-{
-    
-    $jumlahUser = User::count();
-    $sudahAbsen = Absensi::whereDate('created_at', today())->count();
-    $belumAbsen = $jumlahUser - $sudahAbsen;
+    {
+        $jumlahUser = User::count();
+        $sudahAbsen = Absensi::whereDate('created_at', Carbon::today())->distinct('user_id')->count();
+        $belumAbsen = $jumlahUser - $sudahAbsen;
 
-    // Perhitungan rata-rata waktu
-    $averageMasuk = Absensi::whereNotNull('jam_masuk')
-        ->avg(DB::raw("TIME_TO_SEC(jam_masuk)"));
-    $averagePulang = Absensi::whereNotNull('jam_pulang')
-        ->avg(DB::raw("TIME_TO_SEC(jam_pulang)"));
+        $averageMasuk = Absensi::whereNotNull('jam_masuk')->avg('jam_masuk');
+        $averagePulang = Absensi::whereNotNull('jam_pulang')->avg('jam_pulang');
 
-    // Konversi kembali dari detik ke format waktu HH:MM
-    $averageTime = [
-        'masuk' => $averageMasuk ? gmdate('H:i', $averageMasuk) : null,
-        'pulang' => $averagePulang ? gmdate('H:i', $averagePulang) : null,
-    ];
+        $formattedMasuk = $averageMasuk ? Carbon::parse($averageMasuk)->format('H:i') : '00:00';
+        $formattedPulang = $averagePulang ? Carbon::parse($averagePulang)->format('H:i') : '00:00';
 
-    return response()->json([
-        'jumlah_user' => $jumlahUser,
-        'sudah_absen' => $sudahAbsen,
-        'belum_absen' => $belumAbsen,
-        'average_time' => $averageTime,
-    ]);
-}
-
-
-
+        return response()->json([
+            'jumlah_user' => $jumlahUser,
+            'sudah_absen' => $sudahAbsen,
+            'belum_absen' => $belumAbsen,
+            'average_time' => [
+                'masuk' => $formattedMasuk,
+                'pulang' => $formattedPulang,
+            ],
+        ]);
+    }
 }

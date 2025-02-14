@@ -8,8 +8,14 @@ use App\Models\Pengajuan;
 
 class PengajuanController extends Controller
 {
-   public function store(Request $request) 
-   {
+    public function index()
+    {
+        $pengajuan = Pengajuan::with('user')->get();
+        return response()->json($pengajuan);
+    }
+
+    public function store(Request $request) 
+    {
         $request->validate([
             'user_id' => 'required|integer',
             'tanggal_izin' => 'required|date',
@@ -34,5 +40,25 @@ class PengajuanController extends Controller
         return response()->json([
             'message' => 'Pengajuan berhasil ditambahkan',
         ], 201);
+    }
+
+    public function show($id)
+    {
+        $pengajuan = Pengajuan::with('user')->findOrFail($id);
+        return response()->json($pengajuan);
+    }
+
+    public function updateStatus(Request $request, $id)
+    {
+        $pengajuan = Pengajuan::findOrFail($id);
+        $pengajuan->status = $request->status;
+        $pengajuan->save();
+
+        return response()->json(['message' => 'Status pengajuan diperbarui']);
+    }
+
+    
+
+
+
    }
-}

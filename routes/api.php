@@ -55,9 +55,12 @@ Route::group(['middleware' => 'auth:api'], function () {
         Route::post('absensi/masuk',  'absenMasuk');
     
         Route::post('absensi/pulang',  'absenPulang');
-    
-        // Route::get('absensi/rekap',  'getRekapByDate'); 
-    
+
+        Route::get('absensi/rekap',  'getRekapByDate');
+
+
+       
+        
     });
 
     Route::get('rekap-absensi-user', [AbsensiController::class, 'getRekapWithUserDetails']);
@@ -70,4 +73,16 @@ Route::group(['middleware' => 'auth:api'], function () {
     // Route::get('/absensi/rekap', [AbsensiTodayController::class, 'getRekapByDate']);
 
     Route::post('/rekap/ByDate', [RekapController::class, 'RekapitDate']);
+
+    Route::get('absensi/hari-ini', [AbsensiController::class, 'getAbsensiHariIni']);
+
+    Route::get('/absensi-with-status', [AbsensiTodayController::class, 'getAbsensiWithStatus']);
+
+
+    Route::get('/pengajuan', [PengajuanController::class, 'index']);
+    Route::post('/pengajuan', [PengajuanController::class, 'store']);
+    Route::get('/pengajuan/{id}', [PengajuanController::class, 'show']);
+    Route::put('/pengajuan/{id}/status', [PengajuanController::class, 'updateStatus']);
+
+
 });

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Absensi;
+use App\Models\JadwalKerja;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -16,6 +17,7 @@ class AbsensiController extends Controller
     {
         $this->middleware('auth:api');
     }
+
     public function index(){
 
         $absensis = Absensi::all();
@@ -85,32 +87,59 @@ class AbsensiController extends Controller
         return response()->json($absensi);
     }
 
-    // public function getRekapWithUserDetails(Request $request)
-    // {
-    //     $validatedData = $request->validate([
-    //         'date' => 'required|date',
-    //     ]);
+    public function getAbsensiHariIni()
+    {
+        $today = Carbon::now()->toDateString();
+        
+        $karyawan = DB::table('users')
+            ->leftJoin('absensi', function ($join) use ($today) {
+                $join->on('users.id', '=', 'absensi.user_id')
+                    ->whereDate('absensi.jam_masuk', $today);
+            })
+            ->leftJoin('jadwal_kerja', function ($join) use ($today) {
+                $join->on(DB::raw('DATE(jadwal_kerja.tanggal)'), '=', DB::raw("'$today'"));
+            })
+            ->select(
+                'users.id',
+                'users.name',
+                'absensi.jam_masuk',
+                'absensi.jam_pulang',
+                DB::raw("CASE 
+                            WHEN jadwal_kerja.is_libur = 1 THEN 'Libur'
+                            WHEN absensi.jam_masuk IS NOT NULL THEN 'Hadir'
+                            ELSE 'Tidak Hadir'
+                        END as status")
+            )
+            ->get();
 
-    //     $date = $validatedData['date'];
+        return response()->json($karyawan);
+    }
 
-    //     $absensis = Absensi::select(
-    //             'absensis.id', 
-    //             'users.nama as nama_user', 
-    //             DB::raw('DATE(absensis.jam_masuk) as tanggal'), 
-    //             'absensis.jam_masuk', 
-    //             'absensis.jam_pulang'
-    //         )
-    //         ->join('users', 'users.id', '=', 'absensis.user_id')
-    //         ->whereDate('absensis.jam_masuk', $date)
-    //         ->orWhereDate('absensis.jam_pulang', $date)
-    //         ->get();
+    public function getRekapByDate(Request $request)
+    {
+        // Ambil tanggal dari request atau gunakan tanggal hari ini sebagai default
+        $date = $request->query('date', Carbon::today()->toDateString());
 
-    //     return response()->json([
-    //         'status' => 'success',
-    //         'data' => $absensis
-    //     ]);
-    // }
+        Log::info('Tanggal yang diterima: ' . $date);
 
-    
+        // Gunakan DATE() untuk menyesuaikan format dengan database
+        $absensi = Absensi::whereRaw("DATE(jam_masuk) = ?", [$date])
+                    ->with('user:id,name')
 
+                     // Ambil data user (nama)
+                    ->orderBy('jam_masuk', 'asc')
+                    ->get();
+
+        Log::info('Data absensi:', $absensi->toArray());
+
+        // Jika tidak ada data, kembalikan pesan kosong
+        if ($absensi->isEmpty()) {
+            return response()->json([
+                'message' => 'Tidak ada data absensi pada tanggal ini.',
+                'data' => []
+            ], 200);
+        }
+
+        return response()->json($absensi);
+    }
 }

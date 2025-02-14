@@ -49,4 +49,7 @@ class AbsensiTodayController extends Controller
                 'data' => $absensis
             ]);
     }
+
+  
+
 }
