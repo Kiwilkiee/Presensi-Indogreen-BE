@@ -1,4 +1,5 @@
-<?
+<?php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -8,7 +9,10 @@ class JadwalKerja extends Model
 {
     use HasFactory;
 
-    protected $table = 'jadwal_kerja';
+    protected $table = 'jadwal_kerjas';
 
-    protected $fillable = ['tanggal', 'is_libur'];
+    protected $fillable = [
+        'hari',
+        'jam_masuk'
+    ];
 }

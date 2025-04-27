@@ -1,5 +1,4 @@
 <?php
-
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
@@ -10,22 +9,42 @@ class RoleAndPermissionSeeder extends Seeder
 {
     public function run()
     {
-        
-        $guardName = 'api';  
+        $permissions = [
+            'view dashboard',
+            'manage users',
+            'absen masuk',
+            'absen pulang',
+            'edit profil'
+        ];
 
-        // Permissions
-        Permission::create(['name' => 'view dashboard']);
-        Permission::create(['name' => 'manage users']);
-        Permission::create(['name' => 'absen masuk']);
-        Permission::create(['name' => 'absen pulang']);
-        Permission::create(['name' => 'edit profil']);
+        // Guard name
+        $guard = 'api';
 
-        // Roles
-        $adminRole = Role::create(['name' => 'admin']);
-        $karyawanRole = Role::create(['name' => 'karyawan']);
+        // Buat permission untuk guard api
+        foreach ($permissions as $permission) {
+            Permission::firstOrCreate([
+                'name' => $permission,
+                'guard_name' => $guard
+            ]);
+        }
 
-        // Assign permissions to roles
-        $adminRole->givePermissionTo(['view dashboard', 'manage users', 'absen masuk', 'absen pulang', 'edit profil']);
-        $karyawanRole->givePermissionTo(['absen masuk', 'absen pulang', 'edit profil']);
+        // Buat role admin & karyawan untuk guard api
+        $adminRole = Role::firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => $guard
+        ]);
+
+        $karyawanRole = Role::firstOrCreate([
+            'name' => 'karyawan',
+            'guard_name' => $guard
+        ]);
+
+        // Assign permission ke role
+        $adminRole->syncPermissions($permissions); // Admin dapat semua
+        $karyawanRole->syncPermissions([
+            'absen masuk',
+            'absen pulang',
+            'edit profil'
+        ]);
     }
 }

@@ -29,12 +29,16 @@ class AuthController extends Controller
             if (!$token = JWTAuth::attempt($credentials)) {
                 return response()->json(['error' => 'Email atau Password salah'], 401);
             }
-    
             $user = Auth::user();
-            $role = $user->roles->first()->name;
+            $roles = $user->roles->pluck('name'); // contoh: ['admin', 'karyawan']
             
             return response()->json([
-                'user' => $user,
+                'status' => 'success',
+                'user' => [
+                    'nama' => $user->nama,
+                    'email' => $user->email,
+                    'roles' => $roles
+                ],
                 'token' => $token
             ], 200);
             

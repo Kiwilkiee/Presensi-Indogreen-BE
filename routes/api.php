@@ -1,88 +1,114 @@
 <?php
 
-use App\Http\Controllers\AbsensiController;
-use App\Http\Controllers\AbsensiTodayController;
-use App\Http\Controllers\Auth\AuthController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\PengajuanController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\RekapController;
-use GuzzleHttp\Promise\Create;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\AuthController;
+use App\Http\Controllers\UserController;
+use App\Http\Controllers\PresensiController;
+use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\PengajuanController;
+use App\Http\Controllers\RekapController;
+use App\Http\Controllers\BroadcastController;
+use App\Http\Controllers\SettingController;
+use App\Http\Controllers\JadwalKerjaController;
+use App\Http\Controllers\PengingatAbsenController;
+use App\Http\Controllers\PesanPengingatController;
+use App\Http\Controllers\Auth\ForgotPasswordController;
+
+use App\Imports\KaryawanImport;
 
 /*
 |--------------------------------------------------------------------------
 | API Routes
 |--------------------------------------------------------------------------
-|
-| Here is where you can register API routes for your application. These
-| routes are loaded by the RouteServiceProvider and all of them will
-| be assigned to the "api" middleware group. Make something great!
-|
+| Here is where you can register API routes for your application.
+| These routes are loaded by the RouteServiceProvider and all of them
+| will be assigned to the "api" middleware group.
+|--------------------------------------------------------------------------
 */
 
-Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-    return $request->user();
-});
-
-
-Route::group(['middleware' => 'guest'], function () {
+// ========== AUTH ==========
+Route::middleware('guest')->group(function () {
     Route::post('/login', [AuthController::class, 'prosesLogin']);
 });
 
 
-Route::resource('user', UserController::class);
-
-Route::group(['middleware' => 'auth:api'], function () {
-
-    Route::post('/pengajuan', [PengajuanController::class, 'store']);
-    
-    Route::get('/profile', [UserController::class, 'profile']);
-
-    Route::get('/history/{user_id}', [AbsensiController::class, 'getAbsensiById']);
-
-    Route::get('/dashboard', [DashboardController::class, 'index']);
-
-    Route::controller(AbsensiController::class)->group(function () {
-        
-        Route::get('absensi',  'index');
-    
-        Route::get('absensi/{user_id}',  'getAbsensiById');
-    
-        Route::get('absensi/today',  'getAbsensiToday');
-    
-        Route::post('absensi/masuk',  'absenMasuk');
-    
-        Route::post('absensi/pulang',  'absenPulang');
-
-        Route::get('absensi/rekap',  'getRekapByDate');
+Route::post('/forgot-password', [ForgotPasswordController::class, 'sendOtp']);
+Route::post('/verify-otp', [ForgotPasswordController::class, 'verifyOtp']);
+Route::post('/reset-password', [ForgotPasswordController::class, 'resetPassword']);
 
 
-       
-        
+
+// ========== USER (Tanpa Auth) ==========
+Route::post('/user', [UserController::class, 'store']);
+Route::get('/user/{id}', [UserController::class, 'show']);
+
+// ========== USER (Dengan Auth) ==========
+Route::middleware('auth:api')->group(function () {
+    Route::controller(UserController::class)->group(function () {
+        Route::get('/user', 'index');
+        Route::patch('/user/{id}', 'update');
+        Route::delete('/user/{id}', 'destroy');
+        Route::get('/profile', 'profile');
+        Route::post('/import-user', 'import');
+    });     
+
+    // ========== ABSENSI / PRESENSI ==========
+    Route::controller(PresensiController::class)->group(function () {
+        Route::get('/absensi', 'index');
+        Route::post('/absensi/masuk', 'absenMasuk');
+        Route::post('/absensi/pulang', 'absenPulang');
+        Route::get('/absensi/bulanan', 'getPresensiBulanan');
+        Route::get('/absensi/tahunan', 'getRekapTahunan');
+        Route::get('/absensi/today', 'getAbsensiToday');
+        Route::get('/absensi/{id}', 'getAbsensiById');
+        Route::get('/update-alpha', 'updateAlpha');
     });
 
-    Route::get('rekap-absensi-user', [AbsensiController::class, 'getRekapWithUserDetails']);
+    
+    // ========== REKAP ==========
+    Route::post('/rekap/ByDate', [RekapController::class, 'Rekapitulasi']);
+
+    // ========== PENGAJUAN ==========
+    Route::controller(PengajuanController::class)->group(function () {
+        Route::get('/pengajuan', 'index');
+        Route::post('/pengajuan', 'store');
+        Route::get('/pengajuan/{id}', 'show');
+        Route::get('/pengajuan/user/{id}', 'getById');
+        Route::put('/pengajuan/{id}/status', 'updateStatus');
+    });
+
+    // ========== DASHBOARD ==========
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // ========== BROADCAST ==========
+    Route::post('/send-broadcast', [BroadcastController::class, 'sendBroadcast']);
+
+    // ========== SETTING ==========
+    Route::controller(SettingController::class)->group(function () {
+        Route::post('/update-lokasi', 'UpdateLokasi');
+        Route::get('/lokasi', 'getLokasi');
+        Route::post('/pengingat-email/update'. 'updateReminderEmail');
+    });
+
+    
+    // ========== JADWAL KERJA ==========
+    Route::controller(JadwalKerjaController::class)->group(function () {
+        Route::get('/jadwal-kerja', 'index');
+        Route::post('/jadwal-kerja', 'store');
+        Route::get('/jadwal-kerja/{hari}', 'show');
+        Route::delete('/jadwal-kerja/{hari}', 'destroy');
+    });
 
 
+Route::get('/pengingat-absen', [PengingatAbsenController::class, 'index']);
+Route::post('/pengingat-absen', [PengingatAbsenController::class, 'updateOrCreate']);
+Route::post('/pengingat-absen/kirim-ulang', [PengingatAbsenController::class, 'kirimUlang']);
+
+Route::get('/pesan-pengingat', [PesanPengingatController::class, 'get']);
+Route::post('/pesan-pengingat', [PesanPengingatController::class, 'update']);
+
+
+    // ========== LOGOUT ==========
     Route::post('/logout', [AuthController::class, 'logout']);
-
-    Route::get('/today', [AbsensiTodayController::class, 'getAbsensiToday']);
-
-    // Route::get('/absensi/rekap', [AbsensiTodayController::class, 'getRekapByDate']);
-
-    Route::post('/rekap/ByDate', [RekapController::class, 'RekapitDate']);
-
-    Route::get('absensi/hari-ini', [AbsensiController::class, 'getAbsensiHariIni']);
-
-    Route::get('/absensi-with-status', [AbsensiTodayController::class, 'getAbsensiWithStatus']);
-
-
-    Route::get('/pengajuan', [PengajuanController::class, 'index']);
-    Route::post('/pengajuan', [PengajuanController::class, 'store']);
-    Route::get('/pengajuan/{id}', [PengajuanController::class, 'show']);
-    Route::put('/pengajuan/{id}/status', [PengajuanController::class, 'updateStatus']);
-
-
 });

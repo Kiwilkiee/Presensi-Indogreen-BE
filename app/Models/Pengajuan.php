@@ -15,9 +15,11 @@ class Pengajuan extends Model
     protected $fillable = [ 
         'user_id',
         'tanggal_izin',
-        'status',
+        'tanggal_selesai',
+        'keterangan',
         'deskripsi',
         'gambar',
+        'status'
     ];
 
     public function user()

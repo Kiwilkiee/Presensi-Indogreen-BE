@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Imports\KaryawanImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UserController extends Controller
 {
@@ -28,7 +30,7 @@ class UserController extends Controller
         $request->validate([
             'nama' => 'required|max:150',
             'email' => 'required|email|unique:users',
-            'jabatan' => 'required',
+            'divisi' => 'required',
             'password' => 'required|min:6',
             'role' => 'required|exists:roles,name',
         ]);
@@ -36,7 +38,7 @@ class UserController extends Controller
         $user = User::create([
             'nama' => $request->nama,
             'email' => $request->email,
-            'jabatan' => $request->jabatan,
+            'divisi' => $request->divisi,
             'password' => bcrypt($request->password),
             'role' => $request->role,
         ]);
@@ -63,7 +65,7 @@ class UserController extends Controller
         $request->validate([
             'nama' => 'sometimes|required|max:150',
             'email' => 'sometimes|required|email|unique:users,email,' . $user->id,
-            'jabatan' => 'sometimes|required',
+            'divisi' => 'sometimes|required',
             'password' => 'sometimes|required|min:6',
         ]);
 
@@ -74,8 +76,8 @@ class UserController extends Controller
         if ($request->filled('email')) {
             $user->email = $request->email;
         }
-        if ($request->filled('jabatan')) {
-            $user->jabatan = $request->jabatan;
+        if ($request->filled('divisi')) {
+            $user->divisi = $request->divisi;
         }
         if ($request->filled('password')) {
             $user->password = bcrypt($request->password);
@@ -96,4 +98,14 @@ class UserController extends Controller
         return response()->json(['message' => 'User deleted successfully']);
     }
 
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|file|mimes:xlsx,xls'
+        ]);
+
+        Excel::import(new KaryawanImport, $request->file('file'));
+
+        return response()->json(['message' => 'Import berhasil'], 200);
+    }
 }

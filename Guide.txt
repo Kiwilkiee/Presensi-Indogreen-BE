@@ -1,0 +1,44 @@
+Fitur list
+
+
+1-Presensi
+    -Absen masuk/pulang
+    -Lokasi radius
+    -Foto
+    -Terlambat
+    -Status
+
+2-Jadwal kerja
+    -Hari
+    -Jam masuk
+
+3-Setting Lokasi
+    -Longitude
+    -Latitude
+    -Radius
+
+4-Login
+5-Pengajuan Cuti
+    -Jenis
+    -Keterangan
+    -bukti(opsional)
+
+PAGE
+
+User
+
+-home done
+-Pengajuan done
+-Profile done
+-history done 
+-absensi 
+    -ubah notif dan maps pake radius
+    -api jadwal kerja 
+
+Admin
+
+-Karyawan done
+-Pengajuan done
+-Absensi done
+-rekap 
+-Setting maps dan jadwal kerja

@@ -3,24 +3,42 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Absensi; // Pastikan Anda memiliki model Absensi
+use App\Models\Presensi;
 
 class RekapController extends Controller
 {
-    public function rekapitDate(Request $request)
-    {
-        // Validasi input tanggal
-        $request->validate([
-            'tanggal' => 'required|date',
-        ]);
+    public function Rekapitulasi(Request $request)
+{
+    // Validasi input bulan dan tahun
+    $request->validate([
+        'bulan' => 'required|integer|min:1|max:12',
+        'tahun' => 'required|integer|min:2000',
+    ]);
 
-        $tanggal = $request->tanggal;
+    $bulan = $request->bulan;
+    $tahun = $request->tahun;
 
-        $absensi = Absensi::whereDate('created_at', $tanggal)->get();
+    // Ambil semua presensi berdasarkan bulan dan tahun
+    $absensi = Presensi::whereMonth('created_at', $bulan)
+                ->whereYear('created_at', $tahun)
+                ->get();
 
-        return response()->json([
-            'status' => 'success',
-            'data' => $absensi,
-        ]);
-    }
+    // Hitung jumlah berdasarkan status & status_kehadiran
+    $rekap = [
+        'hadir' => $absensi->where('status', 'Hadir')->count(),
+        'izin' => $absensi->where('status', 'Izin')->count(),
+        'sakit' => $absensi->where('status', 'Sakit')->count(),
+        'alpha' => $absensi->where('status', 'Alpha')->count(),
+        'telat' => $absensi->where('status_kehadiran', 'Terlambat')->count(),
+    ];
+
+    return response()->json([
+        'status' => 'success',
+        'bulan' => $bulan,
+        'tahun' => $tahun,
+        'rekap' => $rekap,
+        'data' => $absensi,
+    ]);
+}
+
 }

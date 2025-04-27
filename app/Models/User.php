@@ -22,14 +22,22 @@ class User extends Authenticatable implements JWTSubject
     protected $fillable = [
         'nama',
         'email',
-        'jabatan',
+        'divisi',
         'password',
     ];
 
-    public function absensi()
+   
+    public function pengajuan()
     {
-        return $this->hasMany(Absensi::class);
+        return $this->hasMany(Pengajuan::class, 'user_id');
     }
+
+    public function presensis()
+    {
+        return $this->hasMany(Presensi::class);
+    }
+    
+
 
     /**
      * The attributes that should be hidden for serialization.
@@ -59,4 +67,5 @@ class User extends Authenticatable implements JWTSubject
     {
         return [];
     }
+
 }

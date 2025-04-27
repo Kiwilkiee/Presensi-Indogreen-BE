@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nama')->nullable();
             $table->string('email')->unique();
-            $table->string('jabatan');
+            $table->string('divisi');
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
